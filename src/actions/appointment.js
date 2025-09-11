@@ -6,16 +6,12 @@ import { db } from "@/lib/prismaClient";
 import { Vonage } from "@vonage/server-sdk";
 import { deductCreditsForAppointment } from "./credits";
 import { Auth } from "@vonage/auth";
-import fs from "fs";
-import path from "path";
-const privateKeyPath = path.resolve(process.cwd(), process.env.VONAGE_PRIVATE_KEY);
-const privateKey = fs.readFileSync(privateKeyPath, "utf8");
+
 
 const credentials = new Auth({
   applicationId: process.env.NEXT_PUBLIC_VONAGE_APPLICATION_ID,
-  privateKey,
+  privateKey: process.env.VONAGE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
 });
-
 const options = {};
 const vonage = new Vonage(credentials, options);
 
