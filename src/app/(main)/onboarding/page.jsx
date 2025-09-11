@@ -56,7 +56,7 @@ export default function page() {
     },
   });
   const specialtyValue = watch("specialty");
-   const onDoctorSubmit = async (data:any) => {
+   const onDoctorSubmit = async (data) => {
     if (loading) return;
 
     const formData = new FormData();

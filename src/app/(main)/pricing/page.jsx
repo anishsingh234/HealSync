@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CreditCard, Shield, Check } from "lucide-react";
 import { PricingTable } from "@clerk/nextjs";
