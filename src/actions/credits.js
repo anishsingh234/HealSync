@@ -4,12 +4,11 @@ import { db } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { format } from "date-fns";
-import { User } from "../../generated/prisma";
-// Define credit allocations per plan
+
 const PLAN_CREDITS = {
-  free_user: 2, // Basic plan: 2 credits
-  standard: 10, // Standard plan: 10 credits per month
-  premium: 24,  // Premium plan: 24 credits per month
+  free_user: 2,
+  standard: 10,
+  premium: 24,
 };
 
 // Each appointment costs 2 credits
@@ -21,24 +20,29 @@ export async function checkAndAllocateCredits(user) {
       return null;
     }
 
+    // Only allocate credits for patients
     if (user.role !== "PATIENT") {
       return user;
     }
 
-    // Get user plan from Clerk session claims
-    const { sessionClaims } = await auth();
-    const plan = sessionClaims?.plan || null;
+    // Check if user has a subscription
+    const { has } = await auth();
+
+    // Check which plan the user has
+    const hasBasic = has({ plan: "free_user" });
+    const hasStandard = has({ plan: "standard" });
+    const hasPremium = has({ plan: "premium" });
 
     let currentPlan = null;
     let creditsToAllocate = 0;
 
-    if (plan === "premium") {
+    if (hasPremium) {
       currentPlan = "premium";
       creditsToAllocate = PLAN_CREDITS.premium;
-    } else if (plan === "standard") {
+    } else if (hasStandard) {
       currentPlan = "standard";
       creditsToAllocate = PLAN_CREDITS.standard;
-    } else if (plan === "free_user") {
+    } else if (hasBasic) {
       currentPlan = "free_user";
       creditsToAllocate = PLAN_CREDITS.free_user;
     }
@@ -75,12 +79,18 @@ export async function checkAndAllocateCredits(user) {
         },
       });
 
-      return await tx.user.update({
-        where: { id: user.id },
+      const updatedUser = await tx.user.update({
+        where: {
+          id: user.id,
+        },
         data: {
-          credits: { increment: creditsToAllocate },
+          credits: {
+            increment: creditsToAllocate,
+          },
         },
       });
+
+      return updatedUser;
     });
 
     revalidatePath("/doctors");
@@ -88,10 +98,14 @@ export async function checkAndAllocateCredits(user) {
 
     return updatedUser;
   } catch (error) {
-    console.error("Failed to check subscription and allocate credits:", error);
+    console.error(
+      "Failed to check subscription and allocate credits:",
+      error.message
+    );
     return null;
   }
 }
+
 export async function deductCreditsForAppointment(userId, doctorId) {
   try {
     const user = await db.user.findUnique({ where: { id: userId } });
@@ -128,7 +142,6 @@ export async function deductCreditsForAppointment(userId, doctorId) {
         },
       });
 
-      // Update patient's credit balance
       const updatedUser = await tx.user.update({
         where: { id: user.id },
         data: {
@@ -136,7 +149,6 @@ export async function deductCreditsForAppointment(userId, doctorId) {
         },
       });
 
-      // Update doctor's credit balance
       await tx.user.update({
         where: { id: doctor.id },
         data: {

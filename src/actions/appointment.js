@@ -15,6 +15,7 @@ const credentials = new Auth({
 const options = {};
 const vonage = new Vonage(credentials, options);
 
+
 export async function getDoctorById(doctorId) {
   try {
     const doctor = await db.user.findUnique({
@@ -160,6 +161,7 @@ export async function getAvailableTimeSlots(doctorId) {
 }
 export async function bookAppointment(formData) {
   const { userId } = await auth();
+  console.log(process.env.VONAGE_PRIVATE_KEY?.slice(0, 50));
 
   if (!userId) {
     throw new Error("Unauthorized");
