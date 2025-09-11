@@ -14,15 +14,14 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { updateDoctorActiveStatus } from "@/actions/admin";
 import useFetch from "@/app/hooks/user-fetch";
-import type { User } from "../../../../../generated/prisma"; // type-only import
+
 import { toast } from "sonner";
 
-type ActionType = "SUSPEND" | "REINSTATE" | null;
 
-export function VerifiedDoctors({ doctors }: { doctors: User[] }) {
+export function VerifiedDoctors({ doctors }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [targetDoctor, setTargetDoctor] = useState<User | null>(null);
-  const [actionType, setActionType] = useState<ActionType>(null);
+  const [targetDoctor, setTargetDoctor] = useState(null);
+  const [actionType, setActionType] = useState(null);
 
   const {
     loading,
@@ -38,7 +37,7 @@ export function VerifiedDoctors({ doctors }: { doctors: User[] }) {
     );
   });
 
-  const handleStatusChange = async (doctor: User, suspend: boolean) => {
+  const handleStatusChange = async (doctor, suspend) => {
     const confirmed = window.confirm(
       `Are you sure you want to ${suspend ? "suspend" : "reinstate"} ${
         doctor.name

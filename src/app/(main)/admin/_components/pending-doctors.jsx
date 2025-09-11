@@ -33,8 +33,8 @@ import useFetch from "@/app/hooks/user-fetch";
 import { BarLoader } from "react-spinners";
 import { User } from "../../../../../generated/prisma";
 
-export function PendingDoctors({ doctors }: { doctors: User[] }) {
-  const [selectedDoctor, setSelectedDoctor] = useState<User | null>(null);
+export function PendingDoctors({ doctors }) {
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   const {
     loading,
@@ -42,7 +42,7 @@ export function PendingDoctors({ doctors }: { doctors: User[] }) {
     fn: submitStatusUpdate,
   } = useFetch(updateDoctorStatus);
 
-  const handleViewDetails = (doctor: User) => {
+  const handleViewDetails = (doctor) => {
     setSelectedDoctor(doctor);
   };
 
@@ -50,7 +50,7 @@ export function PendingDoctors({ doctors }: { doctors: User[] }) {
     setSelectedDoctor(null);
   };
 
-  const handleUpdateStatus = async (doctorId: string, status: string) => {
+  const handleUpdateStatus = async (doctorId, status) => {
     if (loading) return;
 
     const formData = new FormData();
