@@ -1,5 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server'
-import React from 'react'
+
 import { db } from './prismaClient';
 const checkUser = async () => {
  const user =  await currentUser();
