@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/doctor/page.jsx", "src/app/doctor/_components/availability-settings.jsx", "src/actions/doctor.js", "src/actions/appointment.js", "src/app/(main)/doctors/[specialty]/[id]/_components/doctor-profile.jsx", "src/app/(main)/doctors/[specialty]/[id]/_components/slot-picker.jsx", "src/app/(main)/doctors/[specialty]/[id]/_components/appointment-form.jsx", "src/components/appointment-card.jsx", "src/app/(main)/video-call/page.jsx", "src/app/(main)/video-call/video-callui.jsx", "src/actions/credits.js", "src/actions/doctors-listing.js", "src/actions/onboarding.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/doctor/page.jsx", "src/app/doctor/_components/availability-settings.jsx", "src/actions/doctor.js", "src/actions/appointment.js", "src/app/(main)/doctors/[specialty]/[id]/_components/doctor-profile.jsx", "src/app/(main)/doctors/[specialty]/[id]/_components/slot-picker.jsx", "src/app/(main)/doctors/[specialty]/[id]/_components/appointment-form.jsx", "src/components/appointment-card.jsx", "src/app/(main)/video-call/page.jsx", "src/app/(main)/video-call/video-callui.jsx", "src/actions/credits.js", "src/actions/doctors-listing.js", "src/actions/onboarding.js", "src/app/(main)/onboarding/page.jsx"],
   "exclude": ["node_modules"]
 }
