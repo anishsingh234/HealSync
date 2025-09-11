@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 /**
  * Sets the user's role and related information
  */
-export async function setUserRole(formData: FormData) {
+export async function setUserRole(formData) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -21,7 +21,7 @@ export async function setUserRole(formData: FormData) {
 
   if (!user) throw new Error("User not found in database");
 
-  const role = formData.get("role") as string | null;
+  const role = formData.get("role") ;
 
   if (!role || !["PATIENT", "DOCTOR"].includes(role)) {
     throw new Error("Invalid role selection");
@@ -45,10 +45,10 @@ export async function setUserRole(formData: FormData) {
 
     // For doctor role - need additional information
     if (role === "DOCTOR") {
-      const specialty = formData.get("specialty") as string | null;
-      const experienceStr = formData.get("experience") as string | null;
-      const credentialUrl = formData.get("credentialUrl") as string | null;
-      const description = formData.get("description") as string | null;
+      const specialty = formData.get("specialty") ;
+      const experienceStr = formData.get("experience") ;
+      const credentialUrl = formData.get("credentialUrl") ;
+      const description = formData.get("description") ;
 
       // Validate inputs
       if (!specialty || !experienceStr || !credentialUrl || !description) {
@@ -77,7 +77,7 @@ export async function setUserRole(formData: FormData) {
       revalidatePath("/");
       return { success: true, redirect: "/doctor/verification" };
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to set user role:", error);
     throw new Error(`Failed to update user profile: ${error.message}`);
   }

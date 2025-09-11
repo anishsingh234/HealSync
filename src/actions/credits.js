@@ -4,7 +4,7 @@ import { db } from "@/lib/prismaClient";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { format } from "date-fns";
-
+import { User } from "../../generated/prisma";
 // Define credit allocations per plan
 const PLAN_CREDITS = {
   free_user: 2, // Basic plan: 2 credits
@@ -15,7 +15,7 @@ const PLAN_CREDITS = {
 // Each appointment costs 2 credits
 const APPOINTMENT_CREDIT_COST = 2;
 
-export async function checkAndAllocateCredits(user:any) {
+export async function checkAndAllocateCredits(user) {
   try {
     if (!user) {
       return null;
@@ -92,7 +92,7 @@ export async function checkAndAllocateCredits(user:any) {
     return null;
   }
 }
-export async function deductCreditsForAppointment(userId: string, doctorId: string) {
+export async function deductCreditsForAppointment(userId, doctorId) {
   try {
     const user = await db.user.findUnique({ where: { id: userId } });
     if (!user) {
@@ -148,7 +148,7 @@ export async function deductCreditsForAppointment(userId: string, doctorId: stri
     });
 
     return { success: true, user: result };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to deduct credits:", error);
     return { success: false, error: error.message || "Unknown error" };
   }

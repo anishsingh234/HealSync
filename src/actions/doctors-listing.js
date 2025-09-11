@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/lib/prismaClient";
 
-export async function getDoctorsBySpecialty(specialty: any) {
+export async function getDoctorsBySpecialty(specialty) {
   try {
     const doctors = await db.user.findMany({
       where: {
