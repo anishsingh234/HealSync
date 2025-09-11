@@ -1,41 +1,45 @@
 "use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
+import { Loader2, Stethoscope, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { User, Stethoscope, Loader2 } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import useFetch from "@/app/hooks/user-fetch";
+import { setUserRole } from "@/actions/onboarding";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
+import { SPECIALTIES } from "@/lib/speciality";
+import { useRouter } from "next/navigation";
+import { Label } from "@radix-ui/react-label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { setUserRole } from "@/actions/onboarding";
-import { doctorFormSchema } from "@/lib/schema";
-import { SPECIALTIES } from "@/lib/specialities";
-import useFetch from "@/hooks/use-fetch";
-import { useEffect } from "react";
-
-export default function OnboardingPage() {
+const doctorFormSchema = z.object({
+  specialty: z.string().min(1, "Speciality is required"),
+  experience: z
+    .number()
+    .min(1, "Experience must be at least 1 year")
+    .max(50, "Experience must be less than 50 years"),
+  credentialUrl: z
+    .string()
+    .url("Invalid URL")
+    .min(1, "Credential URL is required"),
+  description: z
+    .string()
+    .min(20, "Description must be at least 20 characters")
+    .max(1000, "Description cannot exceed 1000 characters"),
+});
+export default function page() {
   const [step, setStep] = useState("choose-role");
   const router = useRouter();
-
-  // Custom hook for user role server action
-  const { loading, data, fn: submitUserRole } = useFetch(setUserRole);
-
-  // React Hook Form setup with Zod validation
+  const { data, fn: submitUserRole, loading } = useFetch(setUserRole);
   const {
     register,
     handleSubmit,
@@ -51,28 +55,8 @@ export default function OnboardingPage() {
       description: "",
     },
   });
-
-  // Watch specialty value for controlled select component
   const specialtyValue = watch("specialty");
-
-  // Handle patient role selection
-  const handlePatientSelection = async () => {
-    if (loading) return;
-
-    const formData = new FormData();
-    formData.append("role", "PATIENT");
-
-    await submitUserRole(formData);
-  };
-
-  useEffect(() => {
-    if (data && data?.success) {
-      router.push(data.redirect);
-    }
-  }, [data]);
-
-  // Added missing onDoctorSubmit function
-  const onDoctorSubmit = async (data) => {
+   const onDoctorSubmit = async (data:any) => {
     if (loading) return;
 
     const formData = new FormData();
@@ -84,14 +68,25 @@ export default function OnboardingPage() {
 
     await submitUserRole(formData);
   };
+  const handlePatientSelection = async () => {
+    if (loading) return;
 
-  // Role selection screen
+    const formData = new FormData();
+    formData.append("role", "PATIENT");
+    await submitUserRole(formData);
+  };
+  useEffect(() => {
+    if (data && data.success) {
+      toast.success("Role Selected");
+      router.push(data.redirect);
+    }
+},[data]);
   if (step === "choose-role") {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card
-          className="border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all"
           onClick={() => !loading && handlePatientSelection()}
+          className="border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all"
         >
           <CardContent className="pt-6 pb-6 flex flex-col items-center text-center">
             <div className="p-4 bg-emerald-900/20 rounded-full mb-4">
@@ -101,8 +96,8 @@ export default function OnboardingPage() {
               Join as a Patient
             </CardTitle>
             <CardDescription className="mb-4">
-              Book appointments, consult with doctors, and manage your
-              healthcare journey
+              Book appointments, manage your health records, and connect with
+              top healthcare professionals.
             </CardDescription>
             <Button
               className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700"
@@ -110,20 +105,19 @@ export default function OnboardingPage() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
                   Processing...
                 </>
               ) : (
-                "Continue as Patient"
+                "Continue as a Patient"
               )}
             </Button>
           </CardContent>
         </Card>
 
-        <Card
-          className="border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all"
-          onClick={() => !loading && setStep("doctor-form")}
-        >
+        <Card 
+        onClick={()=> !loading && setStep("doctor-form")}
+        className="border-emerald-900/20 hover:border-emerald-700/40 cursor-pointer transition-all">
           <CardContent className="pt-6 pb-6 flex flex-col items-center text-center">
             <div className="p-4 bg-emerald-900/20 rounded-full mb-4">
               <Stethoscope className="h-8 w-8 text-emerald-400" />
@@ -132,23 +126,18 @@ export default function OnboardingPage() {
               Join as a Doctor
             </CardTitle>
             <CardDescription className="mb-4">
-              Create your professional profile, set your availability, and
-              provide consultations
+              Manage your appointments, consult with patients, and grow your
+              healthcare practice.
             </CardDescription>
-            <Button
-              className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700"
-              disabled={loading}
-            >
-              Continue as Doctor
+            <Button disabled={loading}  className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700">
+              Continue as a Doctor
             </Button>
           </CardContent>
         </Card>
       </div>
     );
   }
-
-  // Doctor registration form
-  if (step === "doctor-form") {
+   if (step === "doctor-form") {
     return (
       <Card className="border-emerald-900/20">
         <CardContent className="pt-6">
@@ -229,7 +218,7 @@ export default function OnboardingPage() {
               <Textarea
                 id="description"
                 placeholder="Describe your expertise, services, and approach to patient care..."
-                rows="4"
+                rows={4}
                 {...register("description")}
               />
               {errors.description && (

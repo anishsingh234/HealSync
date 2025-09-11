@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import Header from "./_components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -42,6 +43,7 @@ export default function RootLayout({
           >
             <Header />
             {children}
+            <Toaster richColors position="top-right" />
           </ThemeProvider>
       </body>
     </html>
