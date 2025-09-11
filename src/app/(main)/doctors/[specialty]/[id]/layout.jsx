@@ -5,14 +5,8 @@ import { getDoctorById } from "@/actions/appointment";
 import { PageHeader } from "@/app/_components/page-header";
 
 
-interface DoctorProfileLayoutProps {
-  children: ReactNode;
-  params: {
-    id: string;
-  };
-}
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }) {
   const { id } = params;
 
   const { doctor } = await getDoctorById(id);
@@ -26,7 +20,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 export default async function DoctorProfileLayout({
   children,
   params,
-}: DoctorProfileLayoutProps) {
+}) {
   const { id } = params;
   const { doctor } = await getDoctorById(id);
 
