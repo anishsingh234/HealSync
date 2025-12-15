@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/app/_components/page-header";
 import { verifyAdmin } from "@/actions/admin";
-import { DialogOverlay } from "@radix-ui/react-dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ShieldCheck, AlertCircle, Users, CreditCard } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ShieldCheck, AlertCircle, Users } from "lucide-react";
 
 
 export const metadata: Metadata = {
