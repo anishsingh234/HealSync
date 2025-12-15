@@ -55,7 +55,7 @@
     "src/app/(main)/admin/_components/pending-doctors.jsx",
     "src/app/(main)/admin/_components/verified-doctors.jsx",
     ".next/dev/types/**/*.ts"
-, "src/actions/admin.js", "src/app/(main)/doctors/[specialty]/[id]/page.jsx"  ],
+, "src/actions/admin.js", "src/app/(main)/doctors/[specialty]/[id]/page.jsx", "src/app/(main)/doctors/[specialty]/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]
