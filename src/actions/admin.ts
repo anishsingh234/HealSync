@@ -3,7 +3,6 @@
 import { db } from "@/lib/prismaClient"
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
-import { User } from "../../generated/prisma"
 import { VerificationStatus } from "../../generated/prisma"
 export async function verifyAdmin(){
     const { userId } = await auth()
